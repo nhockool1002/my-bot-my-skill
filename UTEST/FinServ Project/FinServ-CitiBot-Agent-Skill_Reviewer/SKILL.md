@@ -18,6 +18,18 @@ Across many of these test cases the same handful of defects keep recurring (miss
 
 If the user gives only one of the two, ask for the other before starting — you cannot verify anything from the sheet alone, and the sheet is what tells you whether the tester's self-scoring is defensible.
 
+## Step 0 — Learn this test cycle's own rules (once per cycle)
+
+Before judging any individual testcase, fetch the cycle's **Overview** page — same URL as the testcase but with the `/testcases/<testcaseId>` part stripped off, i.e. `https://platform.utest.com/testcycles/<cycleId>/`. Read the Announcement, In Scope, Out of Scope, Issue Reporting Instructions and Team Contact Information sections with `get_page_text`; skip "Test Case Payouts", "Bug Payouts" and "Your Specified Environments" (compensation and device-matrix boilerplate, not review-relevant).
+
+This tells you things the testcase and Datasheet alone cannot:
+
+- Whether there's a fixed question set or, as with cycle 565506, testers must invent their own prompts within a stated scope ("must relate to banking, finance, etc.") — which turns "is this Prompt actually in scope" into something you can and should check, separate from how the response was scored.
+- Whether this cycle reports bugs at all (565506 explicitly says "OUT OF SCOPE: Bugs" / "No bugs" — it's a pure response-collection-and-rating cycle).
+- The actual named TTL / Test Engineer / Testing Services Manager for *this* cycle, so your TE Lead message in Step 7 is addressed to a real role for this cycle rather than a generic placeholder.
+
+Read `references/test_cycle_overview.md` for the full reasoning and a worked example from cycle 565506 — reuse that cached extract instead of re-fetching if you're still working within the same cycle later in the conversation, but re-fetch for any cycle you haven't already read this session.
+
 ## Step 1 — Open the test case and get past login
 
 Load the `built-in-browser` skill if you haven't already this session, then `navigate` to the testcase URL. If it redirects to a `prod-auth.cloud.applause.com` sign-in page, tell the user the page needs login and ask them to sign in in the Browser pane; do not attempt to guess or enter credentials yourself. Dismiss the cookie-consent banner ("Continue without Accepting") if it appears before reading the page.
@@ -89,7 +101,8 @@ For every row that is scored anything other than the lowest grade, or that belon
 
 1. **Does the screenshot really show this prompt and this response?** Read the visible chat bubbles, not just the filename.
 2. **Is the scoring defensible against the `Scoring Rubric` tab's own wording**, not against general intuition? The rubric's Safety & Trust "Exceptional" example is literally a bot that *declines* a sensitive request — a safe refusal must not be marked down as a Safety failure, and conversely a response that genuinely leaked or solicited PII must not be marked Exceptional.
-3. Work through `references/evaluation_pitfalls.md` systematically — it lists the specific failure modes (missing pillars, missing rounds, PII-category mis-scoring, Accuracy/Relevance conflation, rubber-stamped comments, invalid or reused screenshots, data-entry mismatches) found repeatedly across prior reviews in this project, with what to check for each.
+3. **Does each Prompt actually respect the cycle's scope rule from Step 0?** A "banking, finance, etc." requirement means a Prompt about something unrelated to banking is a real defect to name — unless the row's category is deliberately "Ask an out-of-scope question", where going off-topic is the point.
+4. Work through `references/evaluation_pitfalls.md` systematically — it lists the specific failure modes (missing pillars, missing rounds, PII-category mis-scoring, Accuracy/Relevance conflation, rubber-stamped comments, invalid or reused screenshots, data-entry mismatches) found repeatedly across prior reviews in this project, with what to check for each.
 
 You do not need to open all 24+ screenshots every time — open enough to establish a pattern (every row with an unusual score, every PII/safety row, a few "Exceptional" rows picked at random to sanity-check against rubber-stamping) and say explicitly in your conclusion which rows you verified directly against their screenshot versus which you accepted from the sheet's text alone.
 
@@ -98,6 +111,6 @@ You do not need to open all 24+ screenshots every time — open enough to establ
 Once your review is done, write your reply in two parts, every time — do not wait for the user to ask for the messages separately:
 
 1. **Conclusion** (in Vietnamese, matching how this project communicates): findings ranked most-severe-first, each citing the exact row (e.g. `R2-ID8`) and a markdown link to the screenshot file that proves it. End with a one-line verdict: whether the case needs an IR (Request More Info) or can be approved as-is.
-2. **Two messages**, each as a Vietnamese | English markdown table (one row per message, or one row per point — match whatever granularity reads as a single paste-ready message): see `references/message_templates.md` for the exact structure and tone to follow, including how to phrase both the "needs fixes" case and the "looks good, approve" case.
+2. **Two messages**, each as a Vietnamese | English markdown table (one row per message, or one row per point — match whatever granularity reads as a single paste-ready message): see `references/message_templates.md` for the exact structure and tone to follow, including how to phrase both the "needs fixes" case and the "looks good, approve" case. Address the second message to the actual TTL/Test Engineer name from Step 0's Team Contact Information, not a generic "TE Lead", when you have it.
 
 Keep the conclusion and the messages consistent — every point raised in the tester-facing message should trace back to something named in the conclusion, and the TE Lead message should be a compressed version of the same findings, not a new analysis.

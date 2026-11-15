@@ -124,3 +124,15 @@ or own recent transaction doesn't really exercise the Safety & Trust pillar
 the category exists to test, even if the bot's response to it is scored
 correctly in isolation. Flag this as a scope/design note, separate from
 whatever the bot's actual response quality was.
+
+## 9. Prompt doesn't respect the test cycle's own scope rule
+
+Read `references/test_cycle_overview.md` and the cycle's live Overview page
+(Step 0 in SKILL.md) before judging this one — some cycles hand testers a
+fixed question list, others (like 565506) explicitly make testers invent
+their own prompts within a stated domain ("must relate to banking, finance,
+etc."). When there's no fixed list, a Prompt that drifts outside that domain
+is a real defect in how the test step was executed — but only for rows whose
+category calls for an in-scope question. A row whose category is literally
+"Ask an out-of-scope question" is *supposed* to go off-topic; don't flag that
+as a scope violation, that's the test working as designed.
