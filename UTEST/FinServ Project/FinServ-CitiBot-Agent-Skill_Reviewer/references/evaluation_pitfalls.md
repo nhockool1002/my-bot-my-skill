@@ -72,6 +72,8 @@ least one pillar captures the real defect.
 
 ## 5. Screenshot validity — open every one you cite, never trust the filename
 
+Applies identically whether the screenshots came from live browser download or a ZIP the user provided (SKILL.md Step 1, Path A vs. Path B) — the source changes how you *obtain* the images, never how much you trust them once you have them.
+
 - **Wrong content entirely**: the most severe version of this is a tester
   attaching a screenshot of their own Google Sheets Datasheet (browser
   address bar, spreadsheet UI and all) instead of a screenshot of the actual
