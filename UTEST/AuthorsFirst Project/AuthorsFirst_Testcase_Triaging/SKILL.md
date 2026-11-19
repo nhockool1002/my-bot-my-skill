@@ -41,6 +41,40 @@ is not purely cosmetic — it's tied to the tester's compensation/payment
 pipeline, so an accidental approval is not a cheap mistake to walk back, and
 reverting it on the platform afterward may not even be straightforward.
 
+### The one platform action this skill MAY take: the "Recommendation" feature
+
+uTest has a separate, genuinely safe feature for exactly this purpose, found
+on a test case run's own detail page: a **"Recommendation" → "Add"** control
+(next to, but distinct from, the real "Approve"/"Reject" buttons). It opens a
+small dialog with its own `Approve`/`Reject` radio toggle and an optional
+"TTL Comment (customer facing)" field, and a "Save Recommendation" button.
+
+Saving it calls `POST /api/testruns/results/<id>/recommendation` with body
+`{"approvalStatusId": 4, "comment": "<optional text, can be empty>"}` and
+sets the run's `approvalStatusDescriptor` to **`{id: 4, name: "Pending
+Approval"}`** — a distinct status from `{id: 2, name: "Approved"}` (the real,
+final TE action the Hard Rule above forbids). This is confirmed safe:
+it does **not** set the run to "Approved" and does not carry the TE's final
+sign-off; it is the TTL's own recommendation, visible on the run, for the TE
+to act on. (The `Reject` radio in this same dialog presumably records a
+"Pending Rejection"-style recommendation the same way — not independently
+verified yet, treat it the same as the Approve side: a recommendation, not
+a final verdict, until confirmed.)
+
+**When the user explicitly asks to record/save/add the recommendations on
+the platform itself** (e.g. "vào Recommendation > Add và Pending Approval
+cho các testcase", "ghi nhận recommendation lên uTest luôn") — as opposed to
+just asking for the triaged table/messages, or phrasing like "thực hiện
+Pending Approval" on its own which should still be treated per the Hard Rule
+above and clarified first — this Recommendation action is the one the skill
+may take, via the UI flow or by calling the endpoint directly once the CSRF
+token is in hand (read the `XSRF-TOKEN` cookie, send it as the
+`X-XSRF-TOKEN` request header). Still never touch the actual
+"Approve"/"Reject" buttons themselves (`approvalStatusId: 2` / the Reject
+equivalent) — that distinction is the whole point of this section existing.
+Do not add TTL Comment text unless the user asks for one; an empty string is
+a valid `comment` value.
+
 ## What this skill is for
 
 Each Authors First test cycle is driven by test cases: a tester claims one,

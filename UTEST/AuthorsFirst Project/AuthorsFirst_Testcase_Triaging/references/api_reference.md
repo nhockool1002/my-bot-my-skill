@@ -121,6 +121,38 @@ Full field reference already documented in the sibling skill's
 discovery effort, just reuse that file's knowledge if both skills are loaded
 in the same session.
 
+## Saving a TTL "Recommendation" (safe — distinct from Approve/Reject)
+
+See SKILL.md's Hard Rule section for when this is and isn't appropriate to
+call. Discovered 2026-11-19 on cycle #566112.
+
+```
+POST /api/testruns/results/<testRunResultId>/recommendation
+Headers: Content-Type: application/json, X-XSRF-TOKEN: <value of the XSRF-TOKEN cookie>
+Body: {"approvalStatusId": 4, "comment": ""}
+```
+
+Requires the CSRF header or the call 403s ("Invalid CSRF Token"); read it
+from `document.cookie`'s `XSRF-TOKEN` entry (URL-decode it) in the logged-in
+tab. Needs a `credentials:'include'` fetch like every other call here.
+
+Response on success: `200 {"data": <new recommendation id>}`.
+
+`approvalStatusId: 4` is confirmed to produce
+`approvalStatusDescriptor: {id: 4, name: "Pending Approval"}` on the run —
+**not** `{id: 2, name: "Approved"}`, which is what the real "Approve" button
+on the Test Cases tab sets. `{id: 1, name: "Pending"}` is the default,
+untouched state before anything (TTL recommendation or TE action) has
+happened. The Reject side of the Recommendation dialog was not indepedently
+captured/confirmed — don't assume its `approvalStatusId` without checking,
+if it's ever needed.
+
+A 409 with `testcase.result.recommendation.must.be.pending.approval.or.rejection`
+means the call's shape or the run's current state doesn't qualify — reproduce
+the payload above exactly (this error showed up when guessing a different
+field name/value before the real payload was captured via a network-request
+intercept of the genuine UI flow).
+
 ## Cycle Overview
 
 Identical to the sibling skill — see its `api_reference.md` for the full
