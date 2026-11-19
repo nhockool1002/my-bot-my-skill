@@ -57,6 +57,18 @@ Use this when what was submitted doesn't hold up once actually checked:
   substantiated, and submitting it as a blocking failure without that backing
   is a real defect in the run, not merely the linked bug's problem.
 
+## Before calling evidence "wrong device" — check `slotDescription`, not `environmentDescription`
+
+Never conclude a run's attached screenshots/video are "from the wrong
+device" using `environmentDescription` alone — that field is the tester's
+own registered hardware profile, not this run's actual requirement. Pull
+`slotDescription` from the same detail call (see `api_reference.md`'s
+dedicated section on this) and judge the evidence against *that* instead.
+A run whose evidence looks like the "wrong" platform per
+`environmentDescription` is very often just a run on a slot
+(`slotDescription`) that genuinely differs from the tester's other
+registered devices — not a sign of fabricated or mismatched evidence.
+
 ## A note on survey/question steps
 
 Don't penalize a run for an unanswered survey question until you've actually

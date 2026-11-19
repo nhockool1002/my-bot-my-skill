@@ -35,8 +35,34 @@ fields:
 | `failedStepNumber` | Which step caused an overall Fail, if any |
 | `submitDate` / `createDate` | Epoch ms |
 | `verificationBugId` | Set if a bug was linked for verification purposes |
-| `environmentDescription` | Device/OS string, same format as the bugs API |
+| `environmentDescription` | Device/OS string, same format as the bugs API. **This is the TESTER's own registered device profile (what hardware/software they have on file), NOT necessarily what this specific run was assigned to test** — see the warning below. |
 | `numberOfMessages` / `unreadMessages` | Existing chat on this run — check before sending a new Info Request |
+
+## `environmentDescription` vs `slotDescription` — do not confuse these
+
+**This caused a real false-positive during cycle #566112 triage (2026-11-19) and
+must not happen again.** The detail call (`GET /api/testruns/results/<id>`)
+returns BOTH fields on `testRunResult`, and they answer different questions:
+
+- `environmentDescription` — the tester's own registered device/browser
+  combination (their hardware profile on file with uTest). It can list a
+  completely different platform than what this particular run was actually
+  supposed to be tested on.
+- `slotDescription` (HTML string, e.g. `"<p>Mac/Firefox - Previous
+  purchase</p>..."`) — **this is the actual, authoritative requirement for
+  THIS run/slot.** It's what the tester claimed and is the thing their
+  submitted evidence should be judged against.
+
+A run's `slotDescription` can name a platform entirely different from its
+`environmentDescription` (e.g. `environmentDescription` says "iPhone 17 Pro
+Max / Apple TV 4K" while `slotDescription` says "Mac/Firefox") — this is
+normal, not a red flag. **Always pull and read `slotDescription` before
+judging whether a step's evidence "matches the wrong device."** Fetch it the
+same way as any other `testRunResult` field in Step 4's detail call — it's
+right there on the object, no extra request needed. Judging device-match
+off `environmentDescription` alone produced an incorrect "evidence doesn't
+match declared environment, recommend Pending Rejection" verdict on a run
+that was actually completely correct once `slotDescription` was checked.
 
 ## Full step detail for one run
 
