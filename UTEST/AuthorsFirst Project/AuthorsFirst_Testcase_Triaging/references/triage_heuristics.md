@@ -69,6 +69,21 @@ A run whose evidence looks like the "wrong" platform per
 (`slotDescription`) that genuinely differs from the tester's other
 registered devices — not a sign of fabricated or mismatched evidence.
 
+**`slotDescription` is the one to treat as authoritative for what the
+evidence should show.** If, after checking `slotDescription`, the evidence
+*still* genuinely doesn't match what the slot itself asked for (e.g. slot
+says "Mac/Firefox" and the screenshots are plainly from an Android phone) —
+that is a real finding, but per the user's own instruction (2026-11-19):
+**don't let it alone drive the verdict to Information Request or Pending
+Rejection.** Keep the verdict whatever the rest of the step evidence
+otherwise earns, and just note the slot/evidence mismatch as a flagged line
+in the final TE Lead summary (Step 8) for the TTL to look at themselves —
+phrased as an observation ("evidence appears to be from X, slot asks for Y"),
+not as the reason for a lower verdict. Only let it independently drive a
+lower verdict if combined with something else that's actually ambiguous or
+broken (missing required evidence, a bug that doesn't hold up, etc.) per the
+sections above.
+
 ## A note on survey/question steps
 
 Don't penalize a run for an unanswered survey question until you've actually

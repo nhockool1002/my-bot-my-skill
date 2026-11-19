@@ -206,6 +206,15 @@ spec, in the same object:
   `comment`, `attachments[]` (general step evidence, each already carrying a
   usable `storageUrl`), `bugsCount`.
 
+Also pull `testRunResult.slotDescription` (HTML string) — this is the
+run's actual, authoritative test requirement, distinct from
+`environmentDescription`. See `references/api_reference.md`'s dedicated
+section and `references/triage_heuristics.md`'s matching section before
+judging any step's evidence against "the wrong device" — check it against
+`slotDescription`, not `environmentDescription`, and if there's still a real
+mismatch after that, don't let it alone lower the verdict (Step 7) — just
+note it as a flagged line in the TE Lead summary (Step 8).
+
 To actually view an attachment, resolve its `storageUrl`
 (`https://platform.utest.com/services/links/v1/internal/<id>?.<ext>`) the
 same way as any other uTest attachment: `navigate` to it and read
@@ -289,7 +298,12 @@ Every triage run ends with all three parts, every time:
    test cases/testers; mention the still-in-progress (New/Started) count
    from Step 3 as context, not as something needing a verdict. Address it to
    the real TTL/TE name from Step 1's `teamContactInformation` when the
-   context calls for naming someone.
+   context calls for naming someone. Also list, as its own short flagged
+   section, any run where the evidence genuinely didn't match its
+   `slotDescription` (not `environmentDescription` — see Step 4/6) once you
+   checked — per `references/triage_heuristics.md`, this is a note for the
+   TTL, not something that should have already lowered the verdict on its
+   own.
 
 Keep all three internally consistent — every claim in a message or the TE
 Lead summary must trace back to a row in the triaged table.
