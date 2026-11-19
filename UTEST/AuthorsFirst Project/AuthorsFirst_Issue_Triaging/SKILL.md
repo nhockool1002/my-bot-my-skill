@@ -5,6 +5,25 @@ description: Triage newly-submitted bug reports (Issues) on uTest for the "Autho
 
 # AuthorsFirst Issue Triaging
 
+## Hard rule — recommend only, never click Approve/Reject on uTest
+
+This skill produces **recommendations**, never platform actions. Verdicts
+are called **"Recommend: Pending Approval"** / **"Recommend: Pending
+Rejection - DUP/OOS/WAD"** everywhere in this skill's output (table,
+messages, TE Lead summary) — never just "Approve"/"Approved" — to keep it
+unambiguous that nothing has actually been actioned on uTest. Never click
+the "Approve"/"Reject"/any equivalent status-changing control on uTest for a
+bug, and never call whatever API endpoint backs that control — even if the
+user's message sounds like direct authorization in the moment (e.g. "thực
+hiện Pending Approval", "approve these"). Clicking Approve/Reject on uTest is
+the Test Engineer (TE)'s job, not this skill's. If a request is ambiguous
+about whether it wants an actual platform action vs. a finalized
+recommendation list, stop and ask — default to not clicking it. See the
+sibling `AuthorsFirst_Testcase_Triaging` skill's own "Hard rule" section for
+the incident (2026-11-19, cycle #566112) that this rule is written from —
+this skill carries the identical risk since it also classifies toward an
+Approve/Reject-style verdict.
+
 ## What this skill is for
 
 Each Authors First test cycle collects bug reports ("Issues") from many testers in parallel. Before a Test Team Lead (TTL) can act on them, every new issue needs a verdict: is it a real, in-scope, non-duplicate defect (→ Pending Approval), or should it be rejected as a duplicate (DUP), out of scope (OOS), or expected/working-as-designed behavior (WAD)? Some reports are too ambiguous or self-contradictory to call either way and need the tester to clarify first (Info Requested).
@@ -95,10 +114,10 @@ Full method and a worked real-example table (showing exactly why a dozen "simila
 
 | Verdict | When |
 |---|---|
-| **Pending Approval** | In scope, reproducible, not a duplicate — may still carry a reporting-quality note. |
-| **Pending Rejection - DUP** | Step 5 found a genuine duplicate; cite the other issue ID. |
-| **Pending Rejection - OOS** | Violates a named Overview out-of-scope/do-not-report rule; cite it. |
-| **Pending Rejection - WAD** | Matches explicitly-expected behavior from the Overview, or is self-evidently intentional; cite the rule/reasoning. |
+| **Recommend: Pending Approval** | In scope, reproducible, not a duplicate — may still carry a reporting-quality note. A recommendation for the TE to approve; this skill does not click Approve itself (see "Hard rule" above). |
+| **Recommend: Pending Rejection - DUP** | Step 5 found a genuine duplicate; cite the other issue ID. |
+| **Recommend: Pending Rejection - OOS** | Violates a named Overview out-of-scope/do-not-report rule; cite it. |
+| **Recommend: Pending Rejection - WAD** | Matches explicitly-expected behavior from the Overview, or is self-evidently intentional; cite the rule/reasoning. |
 | **Info Requested** | Can't safely conclude any of the above yet — contradictory or incomplete report. Must ship with a ready-to-send message (Step 8) and a check of Step 4's `messages[]` so you don't duplicate an existing ask. |
 
 Every issue gets a concrete, evidence-cited summary — quote the specific `result`/`expectedResult`/`testCaseOther` line or Overview sentence that drove the verdict. A bucket label with no reasoning is not acceptable output.
@@ -112,3 +131,8 @@ Every triage run ends with all three parts, every time — never just the table:
 3. **Final TE Lead summary** — one consolidated bilingual message (same table format) grouping results by verdict bucket with counts and headline reasons per group, naming specific issue IDs; a compression of the table, not a fresh analysis. Address it to the real TTL/TE name from Step 1's `teamContactInformation` if the context calls for naming someone, not a generic "TE Lead".
 
 Keep all three internally consistent — every claim in an Info Request or the TE Lead summary must trace back to a row in the triaged table.
+
+Stop there. Do not click Approve/Reject on uTest for any of these issues,
+even for the "Recommend: Pending Approval" ones, and even if asked to "thực
+hiện"/"perform"/"execute" the recommendations — see the "Hard rule" section
+at the top of this file.

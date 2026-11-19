@@ -5,6 +5,42 @@ description: Triage submitted test-case executions on uTest for the "Authors Fir
 
 # AuthorsFirst Testcase Triaging
 
+## Hard rule — recommend only, never click Approve/Reject on uTest
+
+This skill produces **recommendations**, never platform actions. Verdicts
+are called **"Recommend: Pending Approval"**, **"Information Request"**, and
+**"Recommend: Pending Rejection"** everywhere in this skill's output
+(table, messages, TE Lead summary) — never just "Approve"/"Approved", to
+keep it unambiguous that nothing has actually been actioned on uTest.
+
+Concretely, this means:
+- **Never** click the "Approve", "Reject", "Force Unclaim", or "Grant
+  Extension" buttons on the Test Cases tab (or any equivalent control on a
+  run's own detail page), whether by clicking in the browser or by calling
+  whatever API endpoint backs that button.
+- This holds **even if the user's message sounds like direct authorization**
+  in the moment — e.g. "thực hiện Pending Approval", "approve the
+  pending-approval ones", "go ahead and approve these" — because clicking
+  Approve on uTest is the **Test Engineer (TE)'s** job, not this skill's,
+  regardless of whether the person running this skill happens to be logged
+  in as TTL and technically has the button available to them.
+- If a message is genuinely ambiguous about whether the user wants an actual
+  platform action vs. a finalized recommendation list, stop and ask before
+  touching any Approve/Reject/Force Unclaim/Grant Extension control — default
+  to **not** clicking it.
+- The only output of a triage run is the verdict table + messages (Step 8).
+  Nothing on uTest itself should change as a result of running this skill.
+
+**Why this is a hard rule, not just a preference:** on a real triage run
+(Authors First cycle #566112, 2026-11-19) this skill's prior version — whose
+"Shared design philosophy" line below was the only place this was stated —
+was read as implicit permission once the user said "thực hiện Pending
+Approval lần lượt", and ended up clicking Approve for real on 27 live test
+case runs (uTest recorded them as "Approved by: <user>"). Approving on uTest
+is not purely cosmetic — it's tied to the tester's compensation/payment
+pipeline, so an accidental approval is not a cheap mistake to walk back, and
+reverting it on the platform afterward may not even be straightforward.
+
 ## What this skill is for
 
 Each Authors First test cycle is driven by test cases: a tester claims one,
@@ -194,9 +230,9 @@ evidence, unsubstantiated Fails).
 
 | Verdict | When |
 |---|---|
-| **Pending Approval** | Every step genuinely followed, required evidence present and (where checked) verified as real, any Failed step's linked bug independently holds up, nothing violates the cycle's Overview rules. |
+| **Recommend: Pending Approval** | Every step genuinely followed, required evidence present and (where checked) verified as real, any Failed step's linked bug independently holds up, nothing violates the cycle's Overview rules. This is a recommendation for the TE to approve — this skill does not click Approve itself (see "Hard rule" above). |
 | **Information Request** | Can't safely conclude either way yet — missing required attachment(s), an ambiguous/unanswered survey question, unclear whether a step was actually performed, or a Failed step whose linked bug's validity you can't yet confirm. Must ship with a ready-to-send message (Step 8). |
-| **Pending Rejection** | Evidence clearly contradicts the claimed result, a required step was skipped or faked, an Overview out-of-scope rule was violated, or a Failed step's linked bug was itself triaged DUP/OOS/WAD with no other evidence supporting the Fail. |
+| **Recommend: Pending Rejection** | Evidence clearly contradicts the claimed result, a required step was skipped or faked, an Overview out-of-scope rule was violated, or a Failed step's linked bug was itself triaged DUP/OOS/WAD with no other evidence supporting the Fail. This is a recommendation for the TE to reject — this skill does not click Reject itself (see "Hard rule" above). |
 
 Every run gets a concrete, step-cited summary — name the step number/name and
 quote the specific instruction/evidence/Overview line that drove the
@@ -223,3 +259,8 @@ Every triage run ends with all three parts, every time:
 
 Keep all three internally consistent — every claim in a message or the TE
 Lead summary must trace back to a row in the triaged table.
+
+Stop there. Do not click Approve/Reject/Force Unclaim/Grant Extension on
+uTest for any of these runs, even for the "Recommend: Pending Approval"
+ones, and even if asked to "thực hiện"/"perform"/"execute" the
+recommendations — see the "Hard rule" section at the top of this file.
