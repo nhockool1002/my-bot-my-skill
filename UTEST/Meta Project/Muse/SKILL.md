@@ -142,19 +142,52 @@ and let the TTL send it themselves.
 
 ## Step 5 — Publish verified data to the EXT sheet
 
-Confirm the exact target column block first (Hard rule 3). Generate a TSV
-(`Result`, `Video`, `Date`, `Note` — 4 columns, one row per scenario, in the
-sheet's existing row order) from the **Tester View** source data, applying
-any corrections the TTL has directed (e.g. a tester re-uploaded a corrected
-video — use the new link, not the original). Send the TSV to the user and
-select the exact target range (`<Col>2:<Col+3><lastRow>`) in the Browser
-pane so they can paste it themselves (Hard rule 4). If the column header is
-still a generic placeholder (`"Tester 1"`/`"Tester 2"`), confirm with the TTL
-which slot to claim, then rename it with a range-scoped Find & Replace (not
-a sheet-wide one) to `"<Tester Name> - <test case ID>"` once directed.
-Verify the final state with a fresh CSV fetch, never by trusting a
-screenshot alone — concurrent TTL interaction in the same Browser pane can
-make a screenshot stale mid-task.
+**Official process (per TE Lead, 2026-11-19) — follow this, not the legacy
+manual-copy approach below:**
+
+1. In the **Tester View** sheet, once triage is complete for a scenario, set
+   that tester/platform slot's **`Review Status`** column to `Validated`.
+   This is what actually marks the row as TTL-reviewed — it is a real
+   column (one per platform x tester-slot block, next to `Issue ID`), not a
+   free-text note.
+2. Marking a row `Validated` is expected to **auto-populate** the
+   corresponding row into the client-facing **EXT Results sheet** — the TTL
+   does not manually copy Result/Notes/Date/Issue data across anymore where
+   this auto-populate is in place. Go to the EXT sheet afterward and
+   **confirm** the validated results actually populated correctly (don't
+   just trust that marking Validated was enough — verify with a CSV fetch,
+   per Hard rule 4).
+3. **Add Video Evidence** yourself: the auto-populate does not appear to
+   carry the video link automatically, so explicitly add the corresponding
+   video link to each result's own `Video` column in the EXT sheet (now a
+   separate 5th column per block — see `references/sheet_conventions.md`
+   for the current 5-column layout, which differs from the one this skill
+   originally described).
+
+This instruction arrived after this skill was first written and after
+several triage sessions had already published rows the legacy way (manual
+TSV-paste of Result/Video/Date/Note straight into EXT, with a TTL-renamed
+header claiming the slot). **Do not go back and "fix" or reconcile rows
+published the legacy way unless the TTL explicitly asks** — leave prior
+work as-is and apply the Review-Status-driven process going forward. The
+underlying sheets were also restructured around when this instruction
+arrived (generic `(Tester 1)/(Tester 2)/(Tester 3)` slot labels came back
+instead of TTL-renamed `"<Name> - <test case ID>"` headers, and a
+`Scenario Key`/`Scope` pair of columns appeared before the per-platform
+blocks) — re-verify the exact current column layout with a header fetch
+every time rather than trusting what a past session recorded, even from
+this same file.
+
+**Legacy manual-copy approach (fallback only, e.g. if `Review Status` /
+auto-populate isn't present on a given sheet yet):** confirm the exact
+target column block first (Hard rule 3), generate a TSV (`Result`, `Video`,
+`Date`, `Note` — one row per scenario, in the sheet's existing row order)
+from the Tester View source data, send it to the user, and select the exact
+target range in the Browser pane so they paste it themselves (Hard rule 4).
+If a column header is still a generic placeholder, confirm with the TTL
+which slot to claim before renaming it. Verify the final state with a fresh
+CSV fetch either way, never by trusting a screenshot alone — concurrent TTL
+interaction in the same Browser pane can make a screenshot stale mid-task.
 
 ## Step 6 — Update the Tracking Sheet
 

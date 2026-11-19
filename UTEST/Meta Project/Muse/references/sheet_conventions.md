@@ -14,17 +14,62 @@ edit yourself, treat the Tester View as correct and re-derive the EXT row —
 don't assume the EXT sheet was updated more recently just because it's the
 "final" destination.
 
-## EXT sheet: identifying the right column block
+## Official publishing process (per TE Lead, 2026-11-19)
 
-The EXT sheet repeats a 4-column block
+Both the Tester View and the EXT sheet got restructured around when this
+instruction arrived — **don't trust a column layout recorded in this file
+or from a past session; re-fetch the header row every time.** As of
+2026-11-19 the layout is:
+
+- **Tester View**, per platform x tester-slot block: `Result`,
+  `Notes - what you saw` (the video link), `Date`, `Issue ID`, **`Review
+  Status`** (new — this is the column the TTL sets to `Validated` once
+  triage is done for that row).
+- **EXT sheet**, per platform x tester-slot block: `Result`, `Notes - what
+  you saw`, `Date`, `Issue ID`, **`Video`** (new — a separate last column;
+  previously the video link lived inside `Notes`, it's now its own field).
+- Slot header labels are back to auto-generated generic form
+  (`(Tester 1)` / `(Tester 2)` / `(Tester 3)`, sometimes with a
+  machine-generated prefix like `"#1: <Name>"` or `"#3: unassigned, N
+  result(s) entered - name the tester on Slotting"`) rather than the
+  TTL-renamed `"<Name> - <test case ID>"` form described elsewhere in this
+  file — that renaming convention predates this restructure and may no
+  longer be how slots are claimed. Confirm with the TTL before renaming
+  anything now.
+- A `Scenario Key` / `Scope` column pair now sits between `Expected Result`
+  and the first platform block on the Tester View.
+
+The TE Lead's stated process, in order:
+
+1. Finish triage for a row, then set that row's own `Review Status` to
+   `Validated` in the **Tester View**.
+2. This should **auto-populate** the row into the **EXT Results sheet** —
+   go confirm it actually landed correctly (CSV-fetch verify, don't just
+   trust the instruction happened).
+3. **Add the video evidence link** to the EXT sheet's own `Video` column
+   yourself — this part is not automatic.
+
+Do not fall back to the legacy manual-TSV-into-EXT approach (below) unless
+`Review Status` / auto-populate genuinely isn't present on the sheet you're
+working with. See `SKILL.md` Step 5 for the full instruction. Prior rows
+published the legacy way are not something to go back and fix on your own
+initiative — leave them, apply the new process going forward.
+
+## EXT sheet: identifying the right column block (legacy context)
+
+Historically the EXT sheet repeated a 4-column block
 (`<Platform> - Result`, `<Platform> Video`, `<Platform> - Date`,
 `<Platform> Note & Issue ID`) once per platform **x** per tester slot
 (commonly 2 tester slots per platform: `Tester 1`/`Tester 2`, or a real name
-if already claimed). Columns for different platforms and different tester
-slots are visually identical at a glance when scrolled sideways through a
-40+ column sheet — **this is exactly what caused a real incident** where an
-entire test case's 30 rows of data were typed into the wrong tester's
-column block and went unnoticed for days.
+if already claimed) — see the section above for the current 5-column layout
+and the TE Lead's official publishing process, which supersedes manually
+identifying and writing into this block except as a fallback. The general
+hazard below still applies regardless of which layout is live: columns for
+different platforms and different tester slots are visually identical at a
+glance when scrolled sideways through a 40+ column sheet — **this is
+exactly what caused a real incident** where an entire test case's 30 rows
+of data were typed into the wrong tester's column block and went unnoticed
+for days.
 
 Before writing anything:
 
@@ -42,7 +87,15 @@ never guess, even when one "seems" more likely. A different person's
 in-progress data (e.g. another TTL actively filling the sibling slot) is a
 real scenario, not a hypothetical.
 
-## Claiming a column slot
+## Claiming a column slot (legacy — confirm this still applies before doing it)
+
+The sheets were restructured on 2026-11-19 (see "Official publishing
+process" above) and slot headers reverted to an auto-generated generic
+form, sometimes with a machine-filled name prefix already — this may mean
+slots are no longer meant to be manually claimed by renaming at all, e.g.
+if slotting now happens elsewhere (uTest, a Monday.com board) and just
+flows into the sheet's own generated labels. **Confirm with the TTL that
+manual renaming is still wanted before doing it.** If it is:
 
 Once the TTL confirms which slot is theirs, rename the generic header
 (`"Tester 1"` / `"Tester 2"`) to `"<Tester full name> - <uTest test case
@@ -55,13 +108,15 @@ Tester-1/2 slots) and a sheet-wide replace will silently rename all of
 them. Confirm the "Replaced N instances" count matches the 4 columns in the
 header row (exactly 4, not more) before moving on.
 
-## Publishing data: TSV + manual paste, not direct typing
+## Publishing data: TSV + manual paste (legacy fallback only)
 
-See `sheet_editing_safety.md` for the full reasoning and the exact
-mechanics. In short: build the 4-column TSV from Tester View data, send it
-to the user as a file, and select the destination range
-(`<Col>2:<Col+3><lastDataRow>`) in the Browser pane so they paste it
-themselves. This is the default for anything more than a couple of cells.
+Only relevant when `Review Status` / auto-populate isn't available (see
+"Official publishing process" above, which is the default now). See
+`sheet_editing_safety.md` for the full reasoning and the exact mechanics.
+In short: build the TSV from Tester View data, send it to the user as a
+file, and select the destination range in the Browser pane so they paste it
+themselves. Prefer this over direct typing for anything more than a couple
+of cells, same safety reasoning as always.
 
 ## Tracking Sheet: the full column checklist
 
