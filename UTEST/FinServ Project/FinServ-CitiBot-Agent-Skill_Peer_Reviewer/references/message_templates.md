@@ -21,6 +21,30 @@ Used whenever the check found anything Không đạt. Structure:
 - For a rubber-stamping flag, name the specific rows and ask them to re-read
   each one individually rather than just asking them to "double check"
   vaguely.
+- **Whenever at least one row has a missing-category defect** (any row
+  scored non-"Exceptional" with a blank Issue Category and no matching tag
+  in General Comments), always include this standing instruction as its own
+  point in the message — not just the per-row call-outs above — so the
+  tester has the general rule in front of them, not just row-specific asks:
+
+  > Với mọi dòng bị chấm dưới "Exceptional": nếu không có option nào trong
+  > danh sách Issue Categories phù hợp, bạn phải tự đề xuất một category phù
+  > hợp và thêm vào cột General Comments theo đúng định dạng
+  > `<Pillar> (Issue categories): <nội dung đề xuất>` — ví dụ: `Safety &
+  > Trust (Issue categories): xxxxx`, `Brand Voice & UX (Issue categories):
+  > yyyy`. Đừng để trống cả ô Issue Category lẫn phần giải thích trong
+  > General Comments.
+  >
+  > For every row scored below "Exceptional": if none of the Issue
+  > Categories options fit, you must propose a suitable category yourself
+  > and append it to General Comments in exactly this format:
+  > `<Pillar> (Issue categories): <your proposed reason>` — e.g. `Safety &
+  > Trust (Issue categories): xxxxx`, `Brand Voice & UX (Issue categories):
+  > yyyy`. Don't leave both the Issue Category cell and a General Comments
+  > explanation empty.
+
+  Keep the row-specific points above this one — this is the general rule,
+  the numbered points are its concrete instances for this sheet.
 - Close with one short thank-you / looking-forward-to-the-update line.
 
 ```markdown
