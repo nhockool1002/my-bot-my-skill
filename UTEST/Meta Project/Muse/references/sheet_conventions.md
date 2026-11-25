@@ -55,6 +55,25 @@ working with. See `SKILL.md` Step 5 for the full instruction. Prior rows
 published the legacy way are not something to go back and fix on your own
 initiative — leave them, apply the new process going forward.
 
+## `Review Status` — the full set of values (per TE Lead Slack update, 2026-11-25)
+
+The `Review Status` column takes exactly these values — don't invent others:
+
+| Value | Meaning | Side effect |
+|---|---|---|
+| `Pending` | Default state, not yet reviewed by the TTL | none |
+| `Info Request` | TTL needs the tester to clarify/fix something before it can be validated | none (cells stay editable for the tester) |
+| `Validated` | Results are correct and ready — **video link still needs to be added on EXT by the TTL**, this doesn't happen automatically | **Locks** the tester's result cells for that row (intentional — so results/counts can't change after being counted) |
+| `Removed from Scope` | Meta removed this execution from scope | Turns the row's `Result` to `N/A` and **protects**/locks it |
+
+**Important interaction:** if you set a row back to `Info Request` or
+`Pending` *after* it was `Validated`, the previously-locked cells
+**unprotect again for the tester within a few seconds** — i.e. reverting
+the status re-opens editing for the tester. Only do this deliberately (e.g.
+genuinely re-opening a row because something was wrong with a prior
+validation) — don't toggle status back and forth casually, since it
+changes who can edit the row.
+
 ## EXT sheet: identifying the right column block (legacy context)
 
 Historically the EXT sheet repeated a 4-column block
