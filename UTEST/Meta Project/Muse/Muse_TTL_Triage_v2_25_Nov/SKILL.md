@@ -123,6 +123,35 @@ way.
    [[project-muse-utest]] for the full `Review Status` value set and lock
    behavior this was first documented against.
 
+### Recheck old test cases once the tester supplies what you asked for
+
+Sending an Info Request isn't the end of your involvement in that test
+case — it creates an open item you're responsible for closing. When a
+tester resubmits a video, fixes a step, or replies to your IR (on the
+platform, in Slack, or just by editing the sheet), treat that as a cue to
+**go back and re-verify that exact scenario**, not just notice the
+activity and move on:
+
+1. Re-pull the updated evidence from the Tester Sheet (the Notes/video-link
+   cell the tester just touched) — don't assume the fix is correct because
+   they said they fixed it.
+2. Review it against the same Expected Result criteria you used the first
+   time (same rigor as a first-pass triage, not a rubber stamp).
+3. If it now holds up, mark it `Validated`, attach the video on External,
+   and update that test case's Tracking Sheet row — `Approval_Status`
+   moves off `Info Request`/`Info Requested` only once this recheck is
+   actually done, not the moment the tester replies.
+4. If you have several test cases with open IRs at once, keep a running
+   list (mentally or in the cycle's Slack thread) of which are still
+   outstanding. An IR that got a reply but was never re-checked is worse
+   than one still waiting on the tester — it looks resolved from the
+   outside while nothing was actually verified.
+
+This closes the gap that TC #12568285 scenario 7 left open on 2026-11-25:
+an IR went out to the tester for a duplicate-video submission, but nothing
+in the process said who comes back to look once a corrected video arrives
+— don't let a fixed scenario sit un-rechecked.
+
 ## 3. Meta account sourcing & allow listing (pre-activation)
 
 Before a cycle goes `Active` it sits `Pending Activation` while tester
