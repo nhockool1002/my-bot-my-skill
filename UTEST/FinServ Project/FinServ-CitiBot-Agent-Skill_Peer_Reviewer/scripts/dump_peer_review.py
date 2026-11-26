@@ -79,18 +79,40 @@ def parse_rows(raw_csv):
     must be forward-filled across ALL rows, including header rows, before
     filtering down to data rows -- otherwise every row after the first in a
     round loses its round number.
+
+    One real sheet (cycle #566836, Tester 2's "Peer Review" tab) had its R1-ID6
+    ID cell accidentally blanked out even though that row's Prompt Category /
+    Prompt / Response / all I-Q scoring was filled in normally -- a data-entry
+    slip in the original tester's columns (A-D), not something the peer
+    reviewer touched. Relying on the ID cell alone made that real, fully-
+    reviewed row invisible (misreported as an entirely missing row, and its
+    own missing-category defect went unflagged as a result). So: track the
+    row's position within its 8-row round block, and if the ID cell doesn't
+    parse as 1-8 but the Prompt Category cell (D) is non-empty, recover the ID
+    from that position instead of dropping the row.
     """
     reader = csv.reader(io.StringIO(raw_csv))
     rows = list(reader)
     out = []
     round_num = None
+    position = 0
     for row in rows:
         round_cell = (row[ROUND_COL] if len(row) > ROUND_COL else "").strip()
         if re.fullmatch(r"[1-3]", round_cell):
             round_num = int(round_cell)
+            position = 0
+        if round_num is None:
+            continue
         id_cell = (row[ID_COL] if len(row) > ID_COL else "").strip()
+        prompt_cat_cell = (row[3] if len(row) > 3 else "").strip()
         if re.fullmatch(r"[1-8]", id_cell):
+            position = int(id_cell)
             out.append((round_num, row))
+        elif prompt_cat_cell and position < 8:
+            position += 1
+            recovered = list(row) + [""] * (ID_COL + 1 - len(row))
+            recovered[ID_COL] = str(position)
+            out.append((round_num, recovered))
     return out
 
 
